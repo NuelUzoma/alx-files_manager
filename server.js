@@ -5,6 +5,11 @@ const port = 5000;
 // Server.js will be used as a middleware to load routes
 const indexRoutes = require('./routes/index');
 
+// Handle Unhandled Promise Rejections
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Promise Rejection:', reason);
+});
+
 // Use route modules
 app.use('/index', indexRoutes);
 
