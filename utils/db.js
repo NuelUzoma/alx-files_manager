@@ -1,19 +1,19 @@
-const MongoClient = require('mongodb');
+const { MongoClient } = require('mongodb');
 
 class DBCLient {
     constructor() {
-        this.host = 'localhost';
-        this.port = 27017;
-        this.database = 'files_manager';
-        this.url = `mongobg://${this.host}:${this.port}`;
-        this.client = new MongoClient(this.url, { useUnifiedTopology: true });
+        const host = 'localhost';
+        const port = 27017;
+        const database = 'files_manager';
+        const url = `mongodb://${host}:${port}/${database}`;
+        this.client = new MongoClient(url, { monitorCommands: true });
     }
 
     async connect() {
         try {
             await this.client.connect();
             console.log('Connected to MongoDB Server');
-        } catch(error) {
+        } catch (error) {
             console.error('Connection to MongoDB Server failed:', error)
         }
     }
@@ -32,8 +32,9 @@ class DBCLient {
             const usersCollection = db.collection('users');
             const usersCount = await usersCollection.countDocuments();
             return usersCount;
-        } catch(error) {
+        } catch (error) {
             console.error('Error counting users:', error);
+            return 0;
         }
     }
 
@@ -41,10 +42,11 @@ class DBCLient {
         try {
             const dbs = this.client.db();
             const filesCollection = dbs.collection('files');
-            const filesCount = filesCollection.countDocuments();
+            const filesCount = await filesCollection.countDocuments();
             return filesCount;
-        } catch(error) {
+        } catch (error) {
             console.error('Error counting files:', error);
+            return 0;
         }
     }
 }
