@@ -1,11 +1,12 @@
-const express = require('express');
-const app = express();
+import { Router } from 'express';
 
 // Import the AppController Module
-const AppController = require('../controllers/AppController');
+import AppController from '../controllers/AppController';
 
+const router = Router();
 // Defining the API Endpoints
-app.get('/status', AppController.getStatus);
-app.get('/stats', AppController.getStats);
+router.get('/status', AppController.getStatus);
+
+router.get('/stats', AppController.getStats);
 
 module.exports = app;

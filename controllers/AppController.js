@@ -1,34 +1,17 @@
-const express = require('express');
-const dbClient = require('../utils/db');
-const redisClient = require('../utils/redis');
+import dbClient from '../utils/db';
+import redisClient from '../utils/redis';
 
 // Define the appcontroller
-const appController = express.Router();
+class AppController {
+    static getStatus(req, res) {
+        res.status(200).json({ redis: redisClient.isAlive(), db: dbClient.isAlive() });
+    }
 
-// GET /status endpoint
-appController.get('/status', async(req, res) => {
-    const redisStatus = redisClient.isAlive();
-    const dbStatus = dbClient.isAlive();
+    static async getStats(req, res) {
+        const usersCount = await dbClient.nbUsers();
+        const filesCount = await dbClient.nbFiles();
+        res.status(200).json({ users: usersCount, files: filesCount });
+    }
+}
 
-    const status = {
-        redis: redisStatus,
-        db: dbStatus
-    };
-
-    res.status(200).json(status);
-});
-
-// GET /stats endpoint
-appController.get('/stats', async(req, res) => {
-    const nbUsers = await dbClient.nbUsers();
-    const nbFiles = await dbClient.nbFiles();
-
-    const stats = {
-        users: nbUsers,
-        files: nbFiles
-    };
-
-    res.status(200).json(stats);
-});
-
-module.exports = appController;
+module.exports = AppController;
