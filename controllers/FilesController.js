@@ -1,10 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import { promises as fs } from 'fs';
-import { ObjectID } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import mime from 'mime-types';
 import Queue from 'bull';
-import dbClient from '../utils/db';
-import redisClient from '../utils/redis';
+import dbClient from '../utils/db.js';
+import redisClient from '../utils/redis.js';
 
 const fileQueue = new Queue('fileQueue', 'redis://127.0.0.1:6379');
 
@@ -15,7 +15,7 @@ class FilesController {
     const userId = await redisClient.get(key);
     if (userId) {
       const users = dbClient.db.collection('users');
-      const idObject = new ObjectID(userId);
+      const idObject = new ObjectId(userId);
       const user = await users.findOne({ _id: idObject });
       if (!user) {
         return null;
@@ -47,7 +47,7 @@ class FilesController {
 
     const files = dbClient.db.collection('files');
     if (parentId) {
-      const idObject = new ObjectID(parentId);
+      const idObject = new ObjectId(parentId);
       const file = await files.findOne({ _id: idObject, userId: user._id });
       if (!file) {
         return response.status(400).json({ error: 'Parent not found' });
@@ -130,7 +130,7 @@ class FilesController {
     }
     const fileId = request.params.id;
     const files = dbClient.db.collection('files');
-    const idObject = new ObjectID(fileId);
+    const idObject = new ObjectId(fileId);
     const file = await files.findOne({ _id: idObject, userId: user._id });
     if (!file) {
       return response.status(404).json({ error: 'Not found' });
@@ -193,7 +193,7 @@ class FilesController {
     }
     const { id } = request.params;
     const files = dbClient.db.collection('files');
-    const idObject = new ObjectID(id);
+    const idObject = new ObjectId(id);
     const newValue = { $set: { isPublic: true } };
     const options = { returnOriginal: false };
     files.findOneAndUpdate({ _id: idObject, userId: user._id }, newValue, options, (err, file) => {
@@ -212,7 +212,7 @@ class FilesController {
     }
     const { id } = request.params;
     const files = dbClient.db.collection('files');
-    const idObject = new ObjectID(id);
+    const idObject = new ObjectId(id);
     const newValue = { $set: { isPublic: false } };
     const options = { returnOriginal: false };
     files.findOneAndUpdate({ _id: idObject, userId: user._id }, newValue, options, (err, file) => {
@@ -227,7 +227,7 @@ class FilesController {
   static async getFile(request, response) {
     const { id } = request.params;
     const files = dbClient.db.collection('files');
-    const idObject = new ObjectID(id);
+    const idObject = new ObjectId(id);
     files.findOne({ _id: idObject }, async (err, file) => {
       if (!file) {
         return response.status(404).json({ error: 'Not found' });
@@ -280,4 +280,4 @@ class FilesController {
   }
 }
 
-module.exports = FilesController;
+export default FilesController;

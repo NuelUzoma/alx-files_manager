@@ -1,5 +1,5 @@
-import dbClient from '../utils/db';
-import redisClient from '../utils/redis';
+import dbClient from '../utils/db.js';
+import redisClient from '../utils/redis.js';
 
 // Define the appcontroller
 class AppController {
@@ -14,4 +14,4 @@ class AppController {
     }
 }
 
-module.exports = AppController;
+export default AppController;

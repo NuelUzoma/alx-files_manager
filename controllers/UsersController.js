@@ -1,8 +1,8 @@
 import sha1 from 'sha1';
 import { ObjectId } from 'mongodb';
-import { Queue } from 'bull';
-import dbClient from '../utils/db';
-import redisClient from '../utils/redis';
+import  Queue  from 'bull';
+import dbClient from '../utils/db.js';
+import redisClient from '../utils/redis.js';
 
 const userQue = new Queue('userQue', 'redis://127.0.0.1:6379');
 
@@ -60,4 +60,4 @@ class UsersController {
     }
   }
   
-  module.exports = UsersController;
+  export default UsersController;

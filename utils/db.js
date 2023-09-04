@@ -28,13 +28,15 @@ class DBCLient {
     }
 
     async nbUsers() {
-        const usersCollection = this.db.collection('users');
+        const db = this.client.db();
+        const usersCollection = db.collection('users');
         const usersCount = await usersCollection.countDocuments();
         return usersCount;
     }
 
     async nbFiles() {
-        const filesCollection = this.db.collection('files');
+        const db = this.client.db();
+        const filesCollection = db.collection('files');
         const filesCount = await filesCollection.countDocuments();
         return filesCount;
     }
@@ -42,4 +44,4 @@ class DBCLient {
 
 const dbClient = new DBCLient();
 
-module.exports = dbClient;
+export default dbClient;
