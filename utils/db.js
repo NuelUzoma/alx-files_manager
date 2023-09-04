@@ -1,4 +1,4 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 
 const host = process.env.DB_HOST || 'localhost';
 const port = process.env.DB_PORT || 27017;
@@ -7,41 +7,52 @@ const url = `mongodb://${host}:${port}`;
 
 class DBCLient {
     constructor() {
-        this.client = new MongoClient(url, {
-            monitorCommands: true,
-            useUnifiedTopology: true,
-            useNewUrlParser: true
-        });
+        this.client = new MongoClient(url);
         this.client.connect().then(() => {
-            this.db = this.client.db(`${database}`);
+            this.isalive = true;
+            this.db = this.client.db(database);
         }).catch((err) => {
             console.log(err);
         });
     }
 
     isAlive() {
-        if (this.client.isConnected) {
-            return true;
-        } else {
-            return false;
-        }
+        if (this.isalive) return true;
+        return false;
     }
 
     async nbUsers() {
-        const db = this.client.db();
-        const usersCollection = db.collection('users');
-        const usersCount = await usersCollection.countDocuments();
+        const usersCollection = this/db.collection('users');
+        const usersCount = await usersCollection.estimatedDocumentCount();
         return usersCount;
     }
 
     async nbFiles() {
-        const db = this.client.db();
-        const filesCollection = db.collection('files');
-        const filesCount = await filesCollection.countDocuments();
+        const filesCollection = this.db.collection('files');
+        const filesCount = await filesCollection.estimatedDocumentCount();
         return filesCount;
+    }
+
+    async findUser(queryKey, queryVal) {
+        const query = {};
+        if (queryKey === '_id') {
+          query[queryKey] = ObjectId(queryVal);
+        } else {
+          query[queryKey] = queryVal;
+        }
+        const users = this.db.collection('users');
+        const user = await users.findOne(query, {});
+        if (user) return user;
+        return false;
+    }
+    
+      async addUser(userData) {
+        const users = this.db.collection('users');
+        const result = await users.insertOne(userData);
+        return result;
     }
 }
 
 const dbClient = new DBCLient();
 
-export default dbClient;
+module.exports = dbClient;

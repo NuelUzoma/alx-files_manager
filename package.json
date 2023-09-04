@@ -10,7 +10,6 @@
     "dev": "nodemon --exec babel-node --presets @babel/preset-env"
   },
   "author": "",
-  "type": "module",
   "license": "ISC",
   "dependencies": {
     "bull": "^4.11.3",
