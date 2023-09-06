@@ -25,10 +25,10 @@ class RedisClient {
     await this.client.expire(key, duration);
   }
 
-  async del(key) {
-    this.client.del(key);
+  async del(key){
+    await promisify(this.client.DEL).bind(this.client)(key);
   }
 }
 
-const redisClient = new RedisClient();
-module.exports = redisClient;
+export const redisClient = new RedisClient();
+export default redisClient;
